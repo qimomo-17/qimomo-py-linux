@@ -1,9 +1,8 @@
 ## Author
 **七魔陌** 
 - Email: qimomo.17@qq.com
-- 0.1.7 ：
--使用0.1.3版本: from pythonlinux.pythonlinux import *
--本模块是在Python中执行简单Linux命令(实现方法)
+- 0.1.9 ：使用0.1.3: from pythonlinux.pythonlinux import *
+- 本模块是在Python中执行简单Linux命令(实现方法)
 
 主要是作者不会Windows上cmd命令而制作的一个模块
 里面有一个su  :
@@ -17,7 +16,7 @@ pythonlinux-file-path /data/data/pythonlinux/
 
 
 import pythonlinux
-a=linux(linux_file_path='/data/data/pythonlinux/')
+a=linux()
 a.run('pythonlinux-file-path /data/data/pythonlinux/')
 '''
 '''python    

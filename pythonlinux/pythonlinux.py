@@ -2,8 +2,8 @@
 =====简介=====
 模块名称:pythonlinux
 作者:qimomo
-实现python中运行简单命令
-版本0.1.7
+实现python中运行简单linux命令
+版本：0.1.9
 """
 __help__ ="""
 模块名称:pythonlinux
@@ -19,6 +19,7 @@ calculate_folder_depth : 用于查看文件夹最深深度(几个文件夹)
 get_folder_size_getsize : 获取文件，文件夹大小
 download_file   : 用于下载文件
 """
+
 pythonlinux_提示 = True
 print("pythonlinux:正在导入模块... \n    Importing module...\n" if pythonlinux_提示 == True else '',end="")
 import time
@@ -26,13 +27,33 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 import requests
 from tqdm import tqdm
 from getpass import getpass#password = getpass("请输入密码")  输入时不会显示内容
 import json
 import builtins
+
 print("pythonlinux:模块导入:ok \n    Importing module:ok\npythonlinux:正在准备函数... \n    Preparing the function...\n" if pythonlinux_提示 == True else '',end="")
+
 linux_file_path = ""
+
+# open 替换自定义版本,其他函数不变
+"""
+def __open2(file, mode='r', *args, **kwargs):
+    if Linux.__TF权限判断(path=file):
+        return builtins.open(file, mode, *args, **kwargs)
+    else:
+        raise PermissionError("[pythonlinux:exec:权限不足]")
+"""
+# 复制所有内置函数，然后替换 open
+#safe_builtins = dict(builtins.__dict__)  # 复制所有
+#safe_builtins['open'] = __open2   # 只替换这一个
+#safe_globals = {'__builtins__': safe_builtins}
+#__safe_globals = {'__builtins__': __safe_builtins}
+#exec(code, globals=__safe_globals)#code:代码
+
+
 def calculate_folder_depth(path):#深度
     if not os.path.isdir(path):
         return 0
@@ -91,10 +112,16 @@ def clear_screen():
         os.system('clear')
 
 
+def path_ok(path):
+    return path+ "/" if "/" in path and path[-1]!="/" else ("\\" if "\\" in path and path[-1]!="\\" else"")
+    
+def init():
+    if os.name == 'nt':  # 老Windows
+        os.system('')   # 激活ANSI
 
 class linux():
     def __init__(Linux,Linux_file_path=linux_file_path):
-        
+        self=Linux;
         print("pythonlinux:正在初始化... \n    Initializing...")
         #Linux.time=time;Linux.os=os;Linux.shutil=shutil;Linux.subprocess=subprocess;Linux.sys=sys
         Linux.access = [os.getcwd()] # "#/*/" #默认权限
@@ -150,7 +177,7 @@ class linux():
     def __TF权限判断(Linux,path=False):
         TF2=False
         for i_access in Linux.access :
-            TF = True if ((i_access in path) if path else (i_access in Linux.工作路径)) else False
+            TF = True if ((i_access in path) if path and ("./" not in path and ".\\" not in path ) and ("/" in path or "\\" in path) else (i_access in Linux.工作路径)) else False
             if TF == True:
                 TF=True
                 break
@@ -162,7 +189,7 @@ class linux():
             except PermissionError:
                 return False
             except Exception as Ex:
-                print("pythonlinux:linux:__TF权限判断:错误:[{Ex}]")
+                print(f"pythonlinux:linux:__TF权限判断:错误:[{Ex}]")
         elif (("./" in path) if "/" in Linux.工作路径 else (".\\" in path)) or (("/" not in path) and ("\\" not in path)):
             TF2 =TF
         else:
@@ -178,6 +205,7 @@ class linux():
                 return False
             except Exception as Ex:
                 print("pythonlinux:linux:__TF权限判断:错误:[{Ex}]")
+        #print(f"__TF权限判断:TF2:{TF2}")
         return True if TF and TF2 else False
         
     def exec_环境(Linux,*off):
@@ -185,7 +213,7 @@ class linux():
             Linux.open_temp=builtins.open
             exec_Linux=Linux
             def __open2(file, mode='r', *args, **kwargs):
-                #print("pythonlinux:linux:警告[您运行的程序正在调用open函数]")
+                print("pythonlinux:linux:警告[您运行的python程序正在调用open函数]")
                 if exec_Linux.__TF权限判断(path=file):
                     return Linux.open_temp(file,mode,*args,**kwargs)
                 else:
@@ -363,8 +391,8 @@ class linux():
                     try:
                         print(">bash>开始执行:")
                         #with open(Linux.工作路径+Linux.命令_列表[1] if "//" not in Linux.命令_列表[1] and "\\" not in Linux.命令_列表[1] else Linux.命令_列表[1],"r") as 预处理: 
-                        with open(Linux.命令_列表[1] ,"r") as 预处理: 
-                            for 文件命令 in 预处理:
+                        with open(Linux.命令_列表[1] ,"r") as open_file: 
+                            for 文件命令 in open_file:
                                 Linux.执行命令(文件命令.rstrip("\n"))
                             预处理.close()
                         print("执行结束")
@@ -383,21 +411,20 @@ class linux():
                     """
                     try:
                         try:
-                            预处理=open(执行文件路径,"r")
+                            open_file=open(执行文件路径,"r")
                         except Exception :
                             print("\033[91m请检查路径或者文件名称是否正确\033[0m")
                         print(">正在准备运行环境...>")
                         Linux.exec_环境()
                         print("\033[91m>开始执行>\033[0m");
-                        exec(预处理.read())
+                        exec(open_file.read())
                         print("\033[91m执行结束\033[0m")
                         Linux.exec_环境(True)#恢复环境
-                        预处理.close()
+                        open_file.close()
                     except Exception as Ex:
                         print(f"\033[91m执行文件时发生错误[{Ex}]\033[0m")
                 elif  Linux.命令长度>=5 or Linux.命令长度==7:
                         安装命令列表=[]
-                        print(Linux.命令长度)
                         if Linux.命令长度==5:
                             #执行安装命令
                             安装命令列表=[sys.executable,Linux.命令_列表[1],Linux.命令_列表[2],Linux.命令_列表[3],Linux.命令_列表[4]]
@@ -454,8 +481,12 @@ class linux():
                             sequence = 1
                         temp_path = Linux.工作路径
                         if "su" in os.listdir(Linux.linux_file_path):
-                            with open(Linux.linux_file_path+"su") as open_su:
-                                su_dict = json.loads(open_su.read())
+                            with open(Linux.linux_file_path+"su") as open_file:
+                                file=open_file.read().strip()#去掉首尾空格 \n ; \t 制表 ;\r回车;\f换页;\v垂直制表
+                                try:
+                                    su_dict = json.loads(file if file else "{}")
+                                except ValueError as Ex:
+                                    print("su:su文件解析错误{Ex}")
                                 if Linux.命令_列表[sequence] in su_dict:
                                     #getpass.getpass
                                     TF_user = True
@@ -463,12 +494,13 @@ class linux():
                                         Linux.access=su_dict[Linux.命令_列表[sequence]]["路径"]
                                         TF = True;Linux.login_tf = True
                                     else:
-                                        print("密码错误")
-                                open_su.close()
+                                        print("su:密码错误")
+                            file=None
                         else:
-                            print(f"没有'su'文件")
+                            print(f"su:没有'su'文件")
                         if TF:
                             Linux.print=f"@{Linux.命令_列表[sequence]}: "
+                            TF=False
                         elif TF_user :
                             pass
                         else:
@@ -485,6 +517,7 @@ class linux():
                     print("正在下载")
                     download_file(Linux.命令_列表[1],filename= Linux.命令_列表[2] if Linux.命令长度 == 3 else None )
                     print("下载完成")
+
             elif Linux.命令_列表[0].upper() in ["EXIT","F"]:
                 if Linux.命令长度 == 2:
                     if Linux.命令_列表[1] == "-l":
@@ -522,10 +555,11 @@ class linux():
                 try:
                     if Linux.命令长度==1:
                         if Linux.linux_file_path :
-                            user=input("请输入用户名:")
                             if "su" in os.listdir(Linux.linux_file_path):
-                                with open(Linux.linux_file_path+"su","r+") as open_su:
-                                    su_dict = json.loads(open_su.read())
+                                user=input("请输入用户名:")
+                                with open(path_ok(Linux.linux_file_path)+"su","r+") as open_file:
+                                    file=open_file.read().strip()
+                                    su_dict = json.loads(file if file else "{\"0\":{\"lp\":\"0\"}}")
                                     if user not in su_dict:
                                         passwod=getpass("请输入密码(默认无密码0):")
                                         if getpass("请再次输入密码(默认无密码0):")==passwod :
@@ -545,13 +579,13 @@ class linux():
                                                     break
                                                 else:
                                                     if Linux.__TF权限判断(path=user_access):
-                                                        access.append("0")
+                                                        access.append(user_access)
                                                     else:
                                                         print("您的权限不足")
                                             su_dict[user]={'密码':passwod,'路径':user_access}
-                                            open_su.seek(0)          # 回到文件开头
-                                            open_su.truncate()        # 清空剩余内容
-                                            json.dump(su_dict, open_su)  # 写入
+                                            open_file.seek(0)          # 回到文件开头
+                                            open_file.truncate()        # 清空剩余内容
+                                            json.dump(su_dict, open_file)  # 写入
                                             user=user_access=access=None
                                             #
                                         else:
@@ -560,8 +594,13 @@ class linux():
                                     else: #
                                         print(f"用户{user}存在")
                                     #
-                            else:
-                                print("还没有设置pythonLinux.linux_file_path,请使用'pythonlinux-file-path  [you path file]'设置命令设置文件位置")
+                            #el-if "su" in os.listdir(Linux.linux_file_path
+                            else :
+                               print("adduser:没有su文件,正在创建中...")
+                               with open(f"{Linux.linux_file_path}su","w") as open_file:
+                                   open_file.write("")
+                        else:
+                            print("还没有设置pythonLinux.linux_file_path,请使用'pythonlinux-file-path  [you path file]'设置命令设置文件位置")
                 except Exception as Ex:
                     print(f"错误[{Ex}]")
             
@@ -584,3 +623,4 @@ class linux():
         if 命令:
             return "exit"
 print("pythonlinux:函数准备:ok \n    Preparing the function:ok\n" if pythonlinux_提示 == True else '',end="")
+init()
