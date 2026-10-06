@@ -3,13 +3,13 @@
 模块名称:pythonlinux
 作者:qimomo
 实现python中运行简单linux命令
-版本：0.2.2
+版本：0.2.3
 所需ACE版本:0.1.1
 (安装本模块附带对应ACE)
 """
 __help__ ="""
 模块名称:pythonlinux
-版本：0.2.1
+版本：0.2.3
 作者:qimomo
 所需ACE版本:0.1.1
 (安装本模块附带对应ACE)
@@ -118,8 +118,12 @@ def clear_screen():
 
 
 def path_ok(path):
-    return path+ "/" if "/" in path and path[-1]!="/" else ("\\" if "\\" in path and path[-1]!="\\" else"")
-    
+    if not path:
+        return path
+    if path[-1] in ("/", "\\"):
+        return path
+    sep = "\\" if "\\" in path and "/" not in path else "/"
+    return path + sep
 
 
 def iox16(path):#二进制编辑工具

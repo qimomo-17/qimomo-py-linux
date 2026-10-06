@@ -1,7 +1,7 @@
 ## Author
 **七魔陌** 
 - Email: qimomo.17@qq.com
-- 0.2.2 ：使用0.1.3: from pythonlinux.pythonlinux import *
+- 0.2.3 ：使用0.1.3: from pythonlinux.pythonlinux import *
 - 本模块是在Python中执行简单Linux命令(实现方法)
 
 -新增十六进制编辑工具open-x16
