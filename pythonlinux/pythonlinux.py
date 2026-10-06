@@ -140,8 +140,10 @@ def iox16(path):#二进制编辑工具
         return None
     try:
         if input("是否保存文件Y/n:").upper() == "Y":
-            iox16.iox16_write()
-            print(f"已保存{path}")
+            if iox16.iox16_write():
+                print(f"已保存{path}")
+            else:
+                print("保存失败")
         else:
             print(f"已取消保存{path}")
         iox16.close()

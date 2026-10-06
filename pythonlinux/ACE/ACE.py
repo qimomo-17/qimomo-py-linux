@@ -163,7 +163,8 @@ def to_2_x16str(b,bt=8):  #二进制转16进制
 
 class iox16(): #16进制编辑工具
     def __init__(Iox16,TF_p=TF_p,TF_print_h=True):
-        Iox16.help="h:查看帮助\nls:查看所有值\nls 序号a:查看序a号的值\n序号a 值:修改序号a的值，00~FF\nexit:退出"
+        Iox16.help="h:查看帮助\nls:查看所有值\nls 序号a:查看序a号的值\n序号a 值:修改序号a的值，00~FF"
+        Iox16.help+="\nvm 序号a 序号b 值c:从序号a到序号b值修改为c,(包括序号ab)\nexit:退出"
         if TF_print_h:
             print(Iox16.help)
         
@@ -191,6 +192,7 @@ class iox16(): #16进制编辑工具
                 #class_Iox16.file :bytearray
                 Iox16.file=bytearray(file.read())
         except Exception as Ex:
+            Iox16.file_path=False
             print(f"iox16_open:打开文件时发生错误[{Ex}]")
     
     def iox16_return(Iox16):
@@ -198,10 +200,15 @@ class iox16(): #16进制编辑工具
     
     def iox16_write(Iox16):
         try:
-            with open(Iox16.file_path,"wb") as file:
-                file.write(bytes(Iox16.file))
+            if Iox16.file_path:
+                with open(Iox16.file_path,"wb") as file:
+                    file.write(bytes(Iox16.file))
+                    return True
+            else:
+                return False
         except Exception as Ex:
             print(f"iox16_write:在写入文件时发生错误[{Ex}]")
+            return False
     
     def close(Iox16):
         Iox16.__init__(TF_print_h=False)
@@ -223,10 +230,16 @@ class iox16(): #16进制编辑工具
             elif 命令长度==2:
                 print(to_2str_x16str(format(Iox16.file[int(命令列表[1])],'08b')) if int(命令列表[1]) <= len(Iox16.file) else f"没有序号{命令列表[1]}")
             #
+            
+            
         elif 命令列表[0]=="exit":
             return "exit"
+            
+            
         elif 命令列表[0]=="h":
             print(Iox16.help)
+            
+            
         elif 命令列表[0]=="write":
             if Iox16.file_path:
                 try:
@@ -236,6 +249,24 @@ class iox16(): #16进制编辑工具
                     print(f"ixo16:写入文件时发生错误[{Ex}]")
             else:
                 print("iox16:您正在操作文件,所以无法写入文件")
+                
+                
+        elif 命令列表[0]=="vm":
+            if 命令长度 == 4:
+                命令列表1=int(命令列表[1]);命令列表2=int(命令列表[2])
+                len_file=len(Iox16.file)
+                if 命令列表1+1<=len_file and 命令列表2+1<=len_file:
+                    if 命令列表[3] in ax16_a2str:
+                        for i in range(命令列表1,命令列表2+1):
+                            Iox16.file[i]=to_x16str_2(命令列表[3])[0]
+                    else:
+                        print(f"{命令列表[3]}为无效值")
+                else:
+                    print("您的修改范围数值有问题")
+            else:
+                print("命令长度错误")
+                
+                
         elif 命令列表[0].isdigit(): #判断是否为非负整数
             命令列表0=int(命令列表[0])
             file_len=len(Iox16.file)
