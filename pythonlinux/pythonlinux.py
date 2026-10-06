@@ -3,7 +3,7 @@
 模块名称:pythonlinux
 作者:qimomo
 实现python中运行简单linux命令
-版本：0.1.9
+版本：0.2.0
 """
 __help__ ="""
 模块名称:pythonlinux
@@ -26,18 +26,18 @@ import time
 import os
 import shutil
 import subprocess
+import builtins
 import sys
-import time
 import requests
 from tqdm import tqdm
 from getpass import getpass#password = getpass("请输入密码")  输入时不会显示内容
 import json
-import builtins
+import threading #线程
+import ACE #自定义编码与二进制
 
 print("pythonlinux:模块导入:ok \n    Importing module:ok\npythonlinux:正在准备函数... \n    Preparing the function...\n" if pythonlinux_提示 == True else '',end="")
 
 linux_file_path = ""
-
 # open 替换自定义版本,其他函数不变
 """
 def __open2(file, mode='r', *args, **kwargs):
@@ -115,9 +115,40 @@ def clear_screen():
 def path_ok(path):
     return path+ "/" if "/" in path and path[-1]!="/" else ("\\" if "\\" in path and path[-1]!="\\" else"")
     
+
+
+def iox16(path):#二进制编辑工具
+    ACE.TF_p=False
+    iox16=ACE.iox16()
+    try:
+        print("正在打开文件...")
+        iox16.iox16_open_file(path)
+        print("打开成功")
+    except Exception as Ex:
+        print(f"pythonlinux:iox16:打开文件时发生错误{Ex}")
+        return None
+    try:
+        while True:
+            if iox16.run(input(">x16>"))=="exit":
+                break
+    except Exception as Ex:
+        print(f"iox16:编辑文件时发生错误[{Ex}]")
+        return None
+    try:
+        if input("是否保存文件Y/n:").upper() == "Y":
+            iox16.iox16_write()
+            print(f"已保存{path}")
+        else:
+            print(f"已取消保存{path}")
+        iox16.close()
+    except Exception as Ex:
+        print(f"iox16:写入文件时发生错误[{Ex}]")
+
 def init():
     if os.name == 'nt':  # 老Windows
         os.system('')   # 激活ANSI
+
+
 
 class linux():
     def __init__(Linux,Linux_file_path=linux_file_path):
@@ -166,7 +197,8 @@ class linux():
              "linux-wget"+":pythonlinux下载工具",
              "return ~~~ : 将命令 ~~~ 返回输出",
              "linux-system ~~~ : 向系统发送 ~~~",
-             "adduser : 引导创建用户"
+             "adduser : 引导创建用户",
+             "open-x16 ~~~"+":内置二进制文件编辑工具，使用[open-x16 文件名]"
             ]
             ]]
         Linux.run = Linux.执行命令
@@ -223,8 +255,9 @@ class linux():
             builtins.open=Linux.open_temp
         
 
-    def 执行命令(Linux,*命令):
-        命令= str(*命令) if 命令 else False 
+    def 执行命令(Linux,命令=None):
+        Linux.__TF权限判断()
+        命令= 命令 if 命令 else False 
         if 命令=="\n":
             return None
         Linux.命令_列表=[]
@@ -317,13 +350,13 @@ class linux():
 
             elif Linux.命令_列表[0]=="cat":
                     if Linux.命令长度>1:
-                        if Linux.__TF权限判断() :
+                        if Linux.__TF权限判断(Linux.命令_列表[1]) :
                             try:
                                 预处理=open(Linux.命令_列表[1],"r")
                                 print(预处理.read())
                                 预处理.close()
                             except Exception as Ex:
-                                print(f"没有\"{Linux.命令_列表[1]}\"文件")
+                                print(f"打开文件时发生错误{Ex}")
                         else:
                             print(f"\033[91m您没有足够的权限查看\033[0m")
                     else:
@@ -594,7 +627,7 @@ class linux():
                                     else: #
                                         print(f"用户{user}存在")
                                     #
-                            #el-if "su" in os.listdir(Linux.linux_file_path
+                            #el-if "su" in os.listdir(Linux.linux_file_path)
                             else :
                                print("adduser:没有su文件,正在创建中...")
                                with open(f"{Linux.linux_file_path}su","w") as open_file:
@@ -604,6 +637,17 @@ class linux():
                 except Exception as Ex:
                     print(f"错误[{Ex}]")
             
+            #[@_&]
+            #
+            elif Linux.命令_列表[0] == "open-x16":
+                if Linux.命令长度==2:
+                    if Linux.__TF权限判断(Linux.命令_列表[1]):
+                        iox16(Linux.命令_列表[1])
+                        #clear_screen()#清屏
+                    else:
+                        print("权限不足")
+                    pass
+                pass
             else :
                 try :
                     subprocess.run([*Linux.命令_列表])#os.system()
