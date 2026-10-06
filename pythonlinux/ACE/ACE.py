@@ -1,3 +1,17 @@
+"""
+=====简介=====
+模块名称:ACE
+作者:qimomo
+实现二进制操作
+版本：0.1.1
+"""
+__help__ ="""
+模块名称:ACE
+作者:qimomo
+版本:0.1.1
+二进制操作工具
+"""
+
 str_a2str={}
 a2str_str={}
 ap_str="ⅩzxcvbnmlkjhgfdsapoiuytrewqZXCVBNMLKJHGFDSAQWERTYUIOP$@9876543210_:~!&|\\></*-+#[]\'\"=%,;(){}.?^¥±÷≠≯≮≥≤≒≈√π‰⅓½℅％¾¼⅔∵∴∷㏒∭∬∫㏑∮∉∈∏∑⊆⊃⊂∅⊊⊅⊄⊇⊈⫋⫌∀∃∩∪∧∥⊕⊙∨⊥⌒∟∠∽∝⊿△∞≌°℉\r\t\n\b\f\v\0，。？！＃：、；＊—…＆￥·（）‘’“”⁰¹²³⁴⁵⁶⁷⁸⁹ⁱ⁺⁻₁₂₃₄₅₆₇₈₉₊₋₌₍₎①②③④⑤⑥⑦⑧⑨⑩⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑壹贰叁肆伍陆柒捌玖拾佰仟萬億⇅⇔⇕↱↰↑↓←→"
@@ -159,6 +173,16 @@ class iox16(): #16进制编辑工具
         Iox16.TF_p=TF_p
         Iox16.file_path=""
         Iox16.file=bytearray() #创建bytearray类型
+        
+    def iox16_open_2(Iox16,data):
+         if type(data) != bytes:
+             print("iox16_open_2:本函数适用打开二进制数据(或者bytes)),您传入的非本类型")
+             return None
+         try:
+             Iox16.file=bytearray(bytes(data))
+         except Exception as Ex:
+             print(f"iox16_open_2:在他看二进制数据时发生错误[{Ex}]")
+     
      
     def iox16_open_file(Iox16,file_path,bt=8):
         try:
@@ -203,6 +227,15 @@ class iox16(): #16进制编辑工具
             return "exit"
         elif 命令列表[0]=="h":
             print(Iox16.help)
+        elif 命令列表[0]=="write":
+            if Iox16.file_path:
+                try:
+                    with open(Iox16.file_path,"wb") as file:
+                        file.write(bytes(Iox16.file))
+                except Exception as Ex:
+                    print(f"ixo16:写入文件时发生错误[{Ex}]")
+            else:
+                print("iox16:您正在操作文件,所以无法写入文件")
         elif 命令列表[0].isdigit(): #判断是否为非负整数
             命令列表0=int(命令列表[0])
             file_len=len(Iox16.file)

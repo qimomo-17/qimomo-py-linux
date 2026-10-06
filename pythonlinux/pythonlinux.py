@@ -4,10 +4,14 @@
 作者:qimomo
 实现python中运行简单linux命令
 版本：0.2.0
+所需ACE版本:0.1.1
+(安装本模块附带对应ACE)
 """
 __help__ ="""
 模块名称:pythonlinux
 作者:qimomo
+所需ACE版本:0.1.1
+(安装本模块附带对应ACE)
 pythonlinux:help
     class linux:
         run() : 执行命令
