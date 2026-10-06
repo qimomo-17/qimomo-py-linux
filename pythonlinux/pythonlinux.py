@@ -3,13 +3,13 @@
 模块名称:pythonlinux
 作者:qimomo
 实现python中运行简单linux命令
-版本：0.2.3
+版本：0.2.4
 所需ACE版本:0.1.1
 (安装本模块附带对应ACE)
 """
 __help__ ="""
 模块名称:pythonlinux
-版本：0.2.3
+版本：0.2.4
 作者:qimomo
 所需ACE版本:0.1.1
 (安装本模块附带对应ACE)
@@ -220,7 +220,7 @@ class linux():
     def __TF权限判断(Linux,path=False):
         TF2=False
         for i_access in Linux.access :
-            TF = True if ((i_access in path) if path and ("./" not in path and ".\\" not in path ) and ("/" in path or "\\" in path) else (i_access in Linux.工作路径)) else False
+            TF = True if ((i_access in path) if path and ("./" not in path and ".\\" not in path ) and ("/" in path or "\\" in path) else (i_access in Linux.工作路径)) or "0" in Linux.access else False
             if TF == True:
                 TF=True
                 break
