@@ -206,11 +206,14 @@ class iox16(): #16进制编辑工具
         elif 命令列表[0].isdigit(): #判断是否为非负整数
             命令列表0=int(命令列表[0])
             file_len=len(Iox16.file)
-            if (-file_len <= 命令列表0 <= file_len) or (命令列表0 > len(Iox16.file) and (命令列表0-1 <= file_len or (命令列表0+1 >= -file_len ) if 命令列表0<0 else False)) or 命令列表[0]=="0" :
+            if (-file_len <= 命令列表0 <= file_len) or (命令列表0+1 > len(Iox16.file) and 命令列表0 <= file_len) or 命令列表[0]=="0" :
                 if 命令长度==2:
                     if 命令列表[1] in ax16_a2str:
                         #bytearray[0]=int
-                        Iox16.file[命令列表0]=to_x16str_2(命令列表[1])[0]
+                        if 命令列表0+1 > file_len:
+                            Iox16.file.append(int(to_x16str_2str(命令列表[1]),2))
+                        else:
+                            Iox16.file[命令列表0]=to_x16str_2(命令列表[1])[0]
                     else:
                         print("iox16:无效值")
                 else:
