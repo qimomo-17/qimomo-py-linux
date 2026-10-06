@@ -3,7 +3,7 @@
 模块名称:pythonlinux
 作者:qimomo
 实现python中运行简单linux命令
-版本：0.2.1
+版本：0.2.2
 所需ACE版本:0.1.1
 (安装本模块附带对应ACE)
 """
@@ -38,7 +38,7 @@ from tqdm import tqdm
 from getpass import getpass#password = getpass("请输入密码")  输入时不会显示内容
 import json
 import threading #线程
-import ACE #自定义编码与二进制
+from . import ACE #自定义编码与二进制
 
 print("pythonlinux:模块导入:ok \n    Importing module:ok\npythonlinux:正在准备函数... \n    Preparing the function...\n" if pythonlinux_提示 == True else '',end="")
 
